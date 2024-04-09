@@ -1,11 +1,10 @@
-import React, { useRef } from "react";
-import { useGLTF, Text, MeshTransmissionMaterial } from "@react-three/drei";
-import { useFrame, useThree } from "@react-three/fiber";
-import styles from "./style.module.scss";
+import React, { useRef, useState, useEffect } from "react";
+import { useGLTF, MeshTransmissionMaterial } from "@react-three/drei";
+import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 
 export default function Model() {
-  const { nodes } = useGLTF("src/assets/3d/torrus.glb");
+  const { nodes, materials } = useGLTF("src/assets/3d/r_bottle.glb");
   const { viewport } = useThree();
   const torus = useRef(null);
   const materialProps = useControls({
@@ -17,16 +16,54 @@ export default function Model() {
     backside: { value: false },
   });
   const position = [-1, 0, 1.5];
+  const scrollSpeed = 0.04; // Vitesse de rotation lors du scroll
+  const [isScrolling, setIsScrolling] = useState(false);
+
+  const handleScroll = () => {
+    setIsScrolling(true);
+
+    // Réinitialiser l'état isScrolling après un délai
+    setTimeout(() => {
+      setIsScrolling(false);
+    }, 150); // 150 ms de délai pour arrêter la rotation après l'arrêt du scroll
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   useFrame(() => {
-    torus.current.rotation.x += 0.04;
+    if (isScrolling && torus.current) {
+      torus.current.rotation.z += scrollSpeed;
+    }
   });
 
+  if (!nodes || !materials) return null;
+
   return (
-    <group position={position} scale={viewport.width / 6}>
-      <mesh ref={torus} {...nodes.Torus002}>
+    <group position={position} scale={viewport.width / 6} dispose={null}>
+      <mesh
+        ref={torus}
+        castShadow
+        receiveShadow
+        geometry={nodes.Cylinder002.geometry}
+        material={materials["Material.001"]}
+        scale={[0.341, 0.398, 0.341]}
+      >
         <MeshTransmissionMaterial {...materialProps} />
       </mesh>
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Cylinder003.geometry}
+        material={nodes.Cylinder003.material}
+        position={[0, 2.133, 0]}
+        scale={0.397}
+      />
     </group>
   );
 }
