@@ -1,0 +1,7 @@
+.playerContainer {
+  font-size: clamp(100px, 17vw, 200px);
+  color: rgb(0, 0, 0);
+  position: absolute;
+
+  z-index: 1000; // Assurez-vous que le z-index est supérieur à celui de la scène 3D pour qu'il apparaisse au-dessus
+}

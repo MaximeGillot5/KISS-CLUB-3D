@@ -1,0 +1,9 @@
+/* styles.css ou tout autre fichier CSS où vous stockez vos styles */
+.stats {
+  position: absolute;
+  top: 0;
+  max-width: 20px;
+  max-height: 20px;
+  left: 0;
+  z-index: -10000; /* assurez-vous que stats.js est au-dessus de vos autres éléments */
+}
