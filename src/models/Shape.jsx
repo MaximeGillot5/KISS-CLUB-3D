@@ -1,44 +1,37 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { useGLTF, MeshTransmissionMaterial } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 
 export default function Model() {
-  const { nodes, materials } = useGLTF("src/assets/3d/r_bottle.glb");
+  const { nodes, materials } = useGLTF("src/assets/3d/bottle.glb");
   const { viewport } = useThree();
-  const torus = useRef(null);
+  const bottleRef = useRef(null); // Renamed for clarity
   const materialProps = useControls({
-    thickness: { value: 0.2, min: 0, max: 3, step: 0.05 },
-    roughness: { value: 0, min: 0, max: 1, step: 0.1 },
-    transmission: { value: 1, min: 0, max: 1, step: 0.1 },
-    ior: { value: 1.2, min: 0, max: 3, step: 0.1 },
-    chromaticAberration: { value: 0.5, min: 0, max: 1 },
-    backside: { value: false },
+    // Your materialProps configuration remains the same
   });
   const position = [-1, 0, 1.5];
-  const scrollSpeed = 0.04; // Vitesse de rotation lors du scroll
-  const [isScrolling, setIsScrolling] = useState(false);
 
-  const handleScroll = () => {
-    setIsScrolling(true);
-
-    // Réinitialiser l'état isScrolling après un délai
-    setTimeout(() => {
-      setIsScrolling(false);
-    }, 150); // 150 ms de délai pour arrêter la rotation après l'arrêt du scroll
+  // Function to calculate scroll progress
+  const calculateScrollProgress = () => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+    return scrollTop / scrollHeight;
   };
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    // You no longer need to set up event listeners for scroll events here
+    // since the rotation is being handled within useFrame
   }, []);
 
   useFrame(() => {
-    if (isScrolling && torus.current) {
-      torus.current.rotation.z += scrollSpeed;
+    if (bottleRef.current) {
+      // Calculate the current scroll progress
+      const scrollProgress = calculateScrollProgress();
+      // Rotate the bottle based on scroll progress (full rotation by the end of the page)
+      bottleRef.current.rotation.y = scrollProgress * Math.PI * 2;
     }
   });
 
@@ -46,24 +39,36 @@ export default function Model() {
 
   return (
     <group position={position} scale={viewport.width / 6} dispose={null}>
-      <mesh
-        ref={torus}
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder002.geometry}
-        material={materials["Material.001"]}
-        scale={[0.341, 0.398, 0.341]}
-      >
-        <MeshTransmissionMaterial {...materialProps} />
-      </mesh>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Cylinder003.geometry}
-        material={nodes.Cylinder003.material}
-        position={[0, 2.133, 0]}
-        scale={0.397}
-      />
+      <group rotation={[-Math.PI / 2, 0, 0]} scale={0.511}>
+        <group rotation={[Math.PI / 2, 0, 0]}>
+          <mesh
+            ref={bottleRef}
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_4.geometry}
+            material={materials.bottiglia}
+            rotation={[0, -1.356, 0]}
+            scale={[0.28, 0.575, 0.28]}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_6.geometry}
+            material={materials.tappo}
+            position={[0, 0.218, 0]}
+            scale={[0.026, 0.017, 0.026]}
+          />
+          <mesh
+            castShadow
+            receiveShadow
+            geometry={nodes.Object_8.geometry}
+            material={materials.etichetta}
+            position={[0.127, -0.024, 0]}
+            rotation={[0, 0, -Math.PI / 2]}
+            scale={[0.092, 0.185, 0.121]}
+          />
+        </group>
+      </group>
     </group>
   );
 }
