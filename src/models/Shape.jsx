@@ -4,7 +4,7 @@ import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 
 export default function Model() {
-  const { nodes, materials } = useGLTF("src/assets/3d/torrus.glb");
+  const { nodes, materials } = useGLTF("public/assets/3d/torrus.glb");
   const { viewport } = useThree();
   const bottleRef = useRef(null);
   const materialProps = useControls({
