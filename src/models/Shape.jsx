@@ -1,37 +1,20 @@
-import React, { useRef, useEffect } from "react";
-import { useGLTF, MeshTransmissionMaterial } from "@react-three/drei";
+import React, { useRef } from "react";
+import { MeshTransmissionMaterial, useGLTF } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 
 export default function Model() {
-  const { nodes, materials } = useGLTF("src/assets/3d/bottle.glb");
+  const { nodes, materials } = useGLTF("src/assets/3d/torrus.glb");
   const { viewport } = useThree();
-  const bottleRef = useRef(null); // Renamed for clarity
+  const bottleRef = useRef(null);
   const materialProps = useControls({
-    // Your materialProps configuration remains the same
+    opacity: { value: 2, min: 0, max: 2 }, // Use Leva to control opacity
   });
-  const position = [-1, 0, 1.5];
+  const position = [1.5, 0, 2.8];
 
-  // Function to calculate scroll progress
-  const calculateScrollProgress = () => {
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollHeight =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-    return scrollTop / scrollHeight;
-  };
-
-  useEffect(() => {
-    // You no longer need to set up event listeners for scroll events here
-    // since the rotation is being handled within useFrame
-  }, []);
-
-  useFrame(() => {
+  useFrame((state, delta) => {
     if (bottleRef.current) {
-      // Calculate the current scroll progress
-      const scrollProgress = calculateScrollProgress();
-      // Rotate the bottle based on scroll progress (full rotation by the end of the page)
-      bottleRef.current.rotation.y = scrollProgress * Math.PI * 2;
+      bottleRef.current.rotation.y += delta * 1; // Continuous rotation
     }
   });
 
@@ -39,34 +22,33 @@ export default function Model() {
 
   return (
     <group position={position} scale={viewport.width / 6} dispose={null}>
-      <group rotation={[-Math.PI / 2, 0, 0]} scale={0.511}>
+      <group rotation={[-Math.PI / 2, 0, 0]} scale={1}>
         <group rotation={[Math.PI / 2, 0, 0]}>
           <mesh
             ref={bottleRef}
             castShadow
             receiveShadow
-            geometry={nodes.Object_4.geometry}
-            material={materials.bottiglia}
+            geometry={nodes.Torus002.geometry}
+            material={materials.Material}
+            material-transparent={true} // Enable transparency
+            material-opacity={materialProps.opacity} // Control opacity
             rotation={[0, -1.356, 0]}
             scale={[0.28, 0.575, 0.28]}
-          />
-          <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes.Object_6.geometry}
-            material={materials.tappo}
-            position={[0, 0.218, 0]}
-            scale={[0.026, 0.017, 0.026]}
-          />
-          <mesh
-            castShadow
-            receiveShadow
-            geometry={nodes.Object_8.geometry}
-            material={materials.etichetta}
-            position={[0.127, -0.024, 0]}
-            rotation={[0, 0, -Math.PI / 2]}
-            scale={[0.092, 0.185, 0.121]}
-          />
+          >
+<MeshTransmissionMaterial
+  transmission={1}        // Transmission maximale pour une transparence complète
+  thickness={1}         // Contrôle la réfraction à travers l'objet
+  roughness={0}           // Surface parfaitement lisse
+  ior={1.9}               // Index de réfraction pour le verre
+  chromaticAberration={20}  // Léger effet de dispersion de couleurs
+  clearcoat={4}           // Revêtement transparent brillant
+  clearcoatRoughness={0}  // Revêtement parfaitement lisse
+  envMapIntensity={1}     // Intensité de la réflexion de l'environnement
+  attenuationDistance={1} // Atténuation sur une plus grande distance
+  attenuationColor="#ffffff" // Couleur d'atténuation blanche
+/>
+
+          </mesh>
         </group>
       </group>
     </group>
