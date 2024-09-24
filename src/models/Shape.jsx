@@ -3,8 +3,10 @@ import { MeshTransmissionMaterial, useGLTF } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
 
+import glassScene from "../assets/3d/torrus.glb";
+
 export default function Model() {
-  const { nodes, materials } = useGLTF("src/assets/3d/torrus.glb");
+  const { nodes, materials } = useGLTF(glassScene);
   const { viewport } = useThree();
   const bottleRef = useRef(null);
   const materialProps = useControls({
