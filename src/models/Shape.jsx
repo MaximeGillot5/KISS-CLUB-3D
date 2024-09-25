@@ -35,7 +35,7 @@ export default function Model() {
             material-transparent={true} // Enable transparency
             material-opacity={materialProps.opacity} // Control opacity
             rotation={[0, -1.356, 0]}
-            scale={[0.28, 0.575, 0.28]}
+            scale={[0.28, 0.475, 0.38]}
           >
 <MeshTransmissionMaterial
   transmission={1}        // Transmission maximale pour une transparence complète

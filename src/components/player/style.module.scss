@@ -5,3 +5,12 @@
 
   z-index: 1000; // Assurez-vous que le z-index est supérieur à celui de la scène 3D pour qu'il apparaisse au-dessus
 }
+
+
+.canvas_wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 100vh;
+}
