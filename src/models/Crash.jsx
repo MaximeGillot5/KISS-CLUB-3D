@@ -53,9 +53,9 @@ export function Crash({ ...props }) {
   useClickToToggle(setIsRunning, setClickDisabled, clickDisabled);
 
   const [crashTextureOne, crashTextureTwo, crashTextureThree] = useTexture([
-    {texture},
-    {texture1},
-    {texture2},
+    texture,
+    texture1,
+    texture2,
   ]);
 
   const { jitterLevel } = useControls("Jitter Setting", {
