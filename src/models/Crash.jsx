@@ -4,6 +4,9 @@ import { useGLTF, useAnimations, useTexture } from "@react-three/drei";
 import { useControls } from "leva";
 import { CheckerGround } from "./CheckerGround";
 import crashModel from "../assets/3d/crash-bandicoot.glb"
+import texture from "../../textures/texture.png"
+import texture1 from "../../textures/texture-1.png"
+import texture2 from "../../textures/texture-2.png"
 
 import useClickToToggle from "../hooks/useClickToToggle";
 
@@ -50,9 +53,9 @@ export function Crash({ ...props }) {
   useClickToToggle(setIsRunning, setClickDisabled, clickDisabled);
 
   const [crashTextureOne, crashTextureTwo, crashTextureThree] = useTexture([
-    "/textures/texture.png",
-    "/textures/texture-1.png",
-    "/textures/texture-2.png",
+    {texture},
+    {texture1},
+    {texture2},
   ]);
 
   const { jitterLevel } = useControls("Jitter Setting", {
